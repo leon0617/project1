@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.core.config import settings
 from app.core.database import Base
+import app.models.monitoring  # Import models to register them with Base
 
 config = context.config
 
