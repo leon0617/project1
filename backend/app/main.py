@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.logging import setup_logging
 from app.api import api_router
+from app.services import scheduler_service
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +16,14 @@ async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.app_name} v{settings.app_version}")
     logger.info(f"Database type: {settings.database_type}")
     logger.info(f"Scheduler enabled: {settings.scheduler_enabled}")
+    
+    # Start scheduler
+    scheduler_service.start()
+    
     yield
+    
+    # Stop scheduler
+    scheduler_service.stop()
     logger.info(f"Shutting down {settings.app_name}")
 
 

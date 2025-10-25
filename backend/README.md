@@ -1,6 +1,15 @@
 # Project1 Backend API
 
-A modular FastAPI backend with SQLAlchemy, Alembic migrations, and scheduled task support.
+A modular FastAPI backend with SQLAlchemy, Alembic migrations, and scheduled website monitoring support.
+
+## Features
+
+- **Website Monitoring**: Automated health checks with configurable intervals
+- **APScheduler Integration**: Background job scheduling with circuit breaker pattern
+- **Downtime Tracking**: Automatic detection and recording of website outages
+- **REST API**: Full CRUD operations for website management
+- **Database Persistence**: SQLAlchemy ORM with Alembic migrations
+- **Comprehensive Testing**: 36+ tests with 91% code coverage
 
 ## Project Structure
 
@@ -133,8 +142,45 @@ poetry run uvicorn app.main:app --reload
 
 The API will be available at:
 - Health check: http://localhost:8000/api/health
+- Website endpoints: http://localhost:8000/api/websites
 - API docs (Swagger): http://localhost:8000/docs
 - Alternative docs (ReDoc): http://localhost:8000/redoc
+
+## Website Monitoring
+
+The application includes a comprehensive website monitoring system. See [SCHEDULER_MONITORING.md](SCHEDULER_MONITORING.md) for detailed documentation.
+
+### Quick Start
+
+1. Ensure scheduler is enabled in `.env`:
+```bash
+SCHEDULER_ENABLED=true
+```
+
+2. Create a website to monitor:
+```bash
+curl -X POST http://localhost:8000/api/websites \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com",
+    "name": "Example Site",
+    "enabled": true,
+    "check_interval": 300
+  }'
+```
+
+3. The scheduler will automatically start checking the website every 5 minutes (300 seconds)
+
+### Key Features
+
+- **Automated Checks**: HTTP requests with timeout and retry handling
+- **Metrics Collection**: Response time, HTTP status, availability
+- **Downtime Tracking**: Automatic detection of outages with start/end times
+- **Circuit Breaker**: Prevents overwhelming failing sites
+- **Dynamic Job Management**: Jobs added/removed when websites enabled/disabled
+- **Structured Logging**: Comprehensive logs for monitoring and debugging
+
+See the [monitoring documentation](SCHEDULER_MONITORING.md) for API endpoints, configuration options, and architecture details
 
 ## Database Migrations with Alembic
 
