@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     postgres_db: Optional[str] = None
     
     # Scheduler
-    scheduler_enabled: bool = False
+    scheduler_enabled: bool = True
     scheduler_timezone: str = "UTC"
     
     # Playwright
