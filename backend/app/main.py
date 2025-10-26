@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.logging import setup_logging
 from app.api import api_router
+from app.services import playwright_service
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +16,21 @@ async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.app_name} v{settings.app_version}")
     logger.info(f"Database type: {settings.database_type}")
     logger.info(f"Scheduler enabled: {settings.scheduler_enabled}")
+    
+    # Start Playwright service (only if not in test mode)
+    import os
+    if os.environ.get("TESTING") != "1":
+        try:
+            await playwright_service.start()
+        except Exception as e:
+            logger.warning(f"Failed to start Playwright service: {e}")
+            logger.warning("Playwright features will be unavailable")
+    
     yield
+    
+    # Cleanup Playwright service
+    if playwright_service.is_running:
+        await playwright_service.stop()
     logger.info(f"Shutting down {settings.app_name}")
 
 
