@@ -9,6 +9,8 @@ apscheduler==3.10.4
 playwright==1.41.0
 python-dotenv==1.0.0
 psycopg2-binary==2.9.9
+numpy==1.26.3
+redis==5.0.1
 
 # Development dependencies
 pytest==7.4.4
