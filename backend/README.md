@@ -47,9 +47,11 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Install Playwright browsers (if using Playwright):
+4. Install Playwright browsers (required for debug capture):
 ```bash
-playwright install
+python setup_playwright.py
+# Or manually:
+# playwright install chromium
 ```
 
 ### Using Poetry
@@ -253,6 +255,24 @@ Response:
   "app_name": "Project1 API",
   "version": "0.1.0"
 }
+```
+
+### Debug Capture (Playwright)
+
+For detailed documentation on the debug capture feature, see [DEBUG_CAPTURE.md](DEBUG_CAPTURE.md).
+
+- **POST** `/api/debug/sessions` - Create a new debug session
+- **POST** `/api/debug/sessions/{id}/start` - Start capturing network events
+- **POST** `/api/debug/sessions/{id}/stop` - Stop capturing
+- **GET** `/api/debug/sessions/{id}` - Get session details with all events
+- **GET** `/api/debug/sessions/{id}/events` - Query network events (paginated)
+- **WS** `/api/debug/sessions/{id}/stream` - WebSocket for real-time event streaming
+
+#### Quick Example
+
+```bash
+# Create and run a debug session
+python example_debug_session.py https://example.com
 ```
 
 ## Troubleshooting

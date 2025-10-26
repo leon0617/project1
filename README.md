@@ -65,7 +65,9 @@ uvicorn app.main:app --reload
 - **Alembic**: Database migration management
 - **Pydantic Settings**: Configuration management with environment variables
 - **APScheduler**: Support for scheduled background tasks
-- **Playwright**: Browser automation support
+- **Playwright**: Browser automation support with debug capture
+- **Debug Capture**: Real-time network event capture and streaming (see [DEBUG_CAPTURE.md](backend/DEBUG_CAPTURE.md))
+- **WebSocket Support**: Real-time event streaming to clients
 - **Testing**: Pytest with async support and coverage
 
 ## Configuration

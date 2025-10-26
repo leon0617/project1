@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     playwright_headless: bool = True
     playwright_executable_path: Optional[str] = None
     
+    # Debug Session
+    debug_session_max_duration: int = 300  # 5 minutes default
+    debug_session_flush_interval: int = 5  # Flush captured data every 5 seconds
+    
     # Logging
     log_level: str = "INFO"
     
