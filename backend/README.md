@@ -245,15 +245,45 @@ mypy app/
 
 - **GET** `/api/health` - Returns application health status
 
-Response:
-```json
-{
-  "status": "healthy",
-  "timestamp": "2024-01-01T00:00:00.000000",
-  "app_name": "Project1 API",
-  "version": "0.1.0"
-}
-```
+### Websites (CRUD)
+
+- **POST** `/api/websites/` - Create a new website to monitor
+- **GET** `/api/websites/` - List all websites (with pagination)
+- **GET** `/api/websites/{website_id}` - Get a specific website
+- **PUT** `/api/websites/{website_id}` - Update a website
+- **DELETE** `/api/websites/{website_id}` - Delete a website
+
+### Monitoring Results
+
+- **GET** `/api/monitoring/results` - List monitoring results with pagination and filtering
+  - Query parameters: `website_id`, `start_time`, `end_time`, `skip`, `limit`
+
+### SLA Analytics
+
+- **POST** `/api/sla/analytics` - Get SLA metrics (uptime %, response times, etc.)
+  - Request body: `website_id`, `start_date`, `end_date` (all optional)
+
+### Debug Sessions
+
+- **POST** `/api/debug/sessions` - Start a debug session for a website
+- **POST** `/api/debug/sessions/{session_id}/stop` - Stop an active debug session
+- **GET** `/api/debug/sessions/{session_id}` - Get a specific debug session
+- **GET** `/api/debug/sessions` - List debug sessions with pagination
+
+### Network Events
+
+- **GET** `/api/debug/events` - List network events with pagination and filtering
+  - Query parameters: `debug_session_id`, `start_time`, `end_time`, `method`, `skip`, `limit`
+
+### Streaming
+
+- **GET** `/api/debug/sessions/{session_id}/stream` - Stream live network events (SSE)
+
+For detailed API documentation with request/response examples, see [docs/API_EXAMPLES.md](docs/API_EXAMPLES.md)
+
+Interactive documentation is available at:
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
 ## Troubleshooting
 
