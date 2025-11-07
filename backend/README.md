@@ -86,18 +86,32 @@ The application uses Pydantic Settings to manage configuration. Settings can be 
 - `DATABASE_TYPE`: Database type - "sqlite" or "postgres" (default: "sqlite")
 - `SQLITE_DB_PATH`: SQLite database file path (default: "./app.db")
 - `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`: PostgreSQL connection settings
-- `SCHEDULER_ENABLED`: Enable APScheduler (default: False)
+- `SCHEDULER_ENABLED`: Enable APScheduler for automated monitoring (default: False)
+- `SCHEDULER_TIMEZONE`: Timezone for scheduled tasks (default: "UTC")
 - `PLAYWRIGHT_BROWSER`: Browser type for Playwright (default: "chromium")
+- `PLAYWRIGHT_HEADLESS`: Run browser in headless mode (default: True)
+- `PLAYWRIGHT_EXECUTABLE_PATH`: Custom browser executable path (optional)
 - `LOG_LEVEL`: Logging level (default: "INFO")
 
 ### Example .env File
 
 ```env
+# Application
+APP_NAME=Project1 API
+DEBUG=True
+LOG_LEVEL=DEBUG
+
 # Development with SQLite
 DATABASE_TYPE=sqlite
 SQLITE_DB_PATH=./app.db
-DEBUG=True
-LOG_LEVEL=DEBUG
+
+# Scheduler (for automated monitoring)
+SCHEDULER_ENABLED=true
+SCHEDULER_TIMEZONE=UTC
+
+# Playwright (for website monitoring)
+PLAYWRIGHT_BROWSER=chromium
+PLAYWRIGHT_HEADLESS=true
 
 # Production with PostgreSQL
 # DATABASE_TYPE=postgres
@@ -257,6 +271,8 @@ mypy app/
 
 - **GET** `/api/monitoring/results` - List monitoring results with pagination and filtering
   - Query parameters: `website_id`, `start_time`, `end_time`, `skip`, `limit`
+- **POST** `/api/monitoring/check/{website_id}` - Manually trigger a website check
+  - Returns the monitoring result immediately
 
 ### SLA Analytics
 
@@ -281,9 +297,67 @@ mypy app/
 
 For detailed API documentation with request/response examples, see [docs/API_EXAMPLES.md](docs/API_EXAMPLES.md)
 
+For monitoring implementation details, see [docs/MONITORING_IMPLEMENTATION.md](docs/MONITORING_IMPLEMENTATION.md)
+
 Interactive documentation is available at:
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
+
+## Automated Website Monitoring
+
+The application includes an automated website monitoring system using Playwright and APScheduler.
+
+### Features
+
+- **Periodic Checks**: Automatically checks all enabled websites every 60 seconds
+- **Metrics Tracking**: Records response time, status code, and success/failure
+- **Network Event Capture**: Captures detailed network events during debug sessions
+- **Manual Triggers**: Supports on-demand website checks via API
+- **Error Handling**: Gracefully handles network errors and timeouts
+
+### Enabling Automated Monitoring
+
+1. Set `SCHEDULER_ENABLED=true` in your `.env` file
+2. Install Playwright browsers:
+   ```bash
+   playwright install chromium
+   ```
+3. Start the application:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+4. Add websites to monitor via the API
+
+The scheduler will automatically start and check all enabled websites every 60 seconds.
+
+### Manual Check
+
+You can also trigger a website check manually:
+
+```bash
+curl -X POST http://localhost:8000/api/monitoring/check/1
+```
+
+This is useful for testing or immediate validation.
+
+### Viewing Results
+
+View monitoring results:
+
+```bash
+# List all results
+curl http://localhost:8000/api/monitoring/results
+
+# Filter by website
+curl "http://localhost:8000/api/monitoring/results?website_id=1"
+
+# Get SLA analytics
+curl -X POST http://localhost:8000/api/sla/analytics \
+  -H "Content-Type: application/json" \
+  -d '{"website_id": 1}'
+```
+
+For more details, see [docs/MONITORING_IMPLEMENTATION.md](docs/MONITORING_IMPLEMENTATION.md)
 
 ## Troubleshooting
 

@@ -6,17 +6,33 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.logging import setup_logging
 from app.api import api_router
+from app.tasks.scheduler import task_scheduler
 
 logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Startup
     logger.info(f"Starting {settings.app_name} v{settings.app_version}")
     logger.info(f"Database type: {settings.database_type}")
     logger.info(f"Scheduler enabled: {settings.scheduler_enabled}")
+
+    # Initialize and start the scheduler if enabled
+    if settings.scheduler_enabled:
+        task_scheduler.initialize()
+        task_scheduler.start()
+        logger.info("Background task scheduler started")
+
     yield
+
+    # Shutdown
     logger.info(f"Shutting down {settings.app_name}")
+
+    # Clean up scheduler and resources
+    if settings.scheduler_enabled:
+        await task_scheduler.cleanup()
+        logger.info("Background task scheduler stopped")
 
 
 def create_application() -> FastAPI:
