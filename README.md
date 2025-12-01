@@ -1,12 +1,12 @@
-# Project1
+# Project1 - Site Monitoring System
 
-This project has evolved from a simple CLI script to a modular FastAPI backend application.
+A comprehensive site monitoring and analytics platform with a FastAPI backend and modern React frontend.
 
 ## Repository Structure
 
 ```
 project1/
-├── backend/              # FastAPI backend application (see backend/README.md for details)
+├── backend/              # FastAPI backend application
 │   ├── app/              # Application code
 │   │   ├── api/          # API endpoints
 │   │   ├── core/         # Core functionality (config, database, logging)
@@ -19,14 +19,22 @@ project1/
 │   ├── requirements.txt  # Python dependencies
 │   ├── pyproject.toml    # Poetry configuration
 │   └── README.md         # Backend documentation
+├── frontend/             # React + TypeScript frontend
+│   ├── src/              # Source code
+│   │   ├── components/   # React components
+│   │   ├── hooks/        # Custom React hooks
+│   │   ├── lib/          # API client and utilities
+│   │   ├── pages/        # Page components
+│   │   ├── stores/       # State management (Zustand)
+│   │   └── types/        # TypeScript types
+│   ├── e2e/              # End-to-end tests
+│   └── README.md         # Frontend documentation
 └── project1.py           # Original CLI script (legacy)
 ```
 
 ## Quick Start
 
-For detailed instructions, see [backend/README.md](backend/README.md).
-
-### Development Setup
+### Backend Setup
 
 1. Navigate to the backend directory:
 ```bash
@@ -54,12 +62,30 @@ alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
-6. Access the API:
-   - Health Check: http://localhost:8000/api/health
-   - API Docs: http://localhost:8000/docs
+The backend API will be available at http://localhost:8000
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+```bash
+cd frontend
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
+npm run dev
+```
+
+The frontend application will be available at http://localhost:5173
 
 ## Features
 
+### Backend
 - **FastAPI**: Modern, fast web framework for building APIs
 - **SQLAlchemy**: ORM for database operations
 - **Alembic**: Database migration management
@@ -68,24 +94,89 @@ uvicorn app.main:app --reload
 - **Playwright**: Browser automation support
 - **Testing**: Pytest with async support and coverage
 
-## Configuration
+### Frontend
+- **React 19** with TypeScript
+- **Vite**: Fast development and build tool
+- **Tailwind CSS**: Utility-first CSS framework
+- **React Router**: Client-side routing
+- **TanStack Query**: API state management and caching
+- **Zustand**: Local state management
+- **Recharts**: Data visualization
+- **Vitest** + React Testing Library: Unit testing
+- **Playwright**: E2E testing
 
-The application uses environment variables for configuration. Copy `.env` from the backend directory and adjust as needed:
+### Application Features
+- 📊 **Dashboard**: Real-time uptime metrics, response time charts, and downtime timelines
+- 🌐 **Site Management**: Add, edit, and remove monitored sites
+- 🐛 **Debug Console**: DevTools-like interface with live event streaming (SSE)
+- 📈 **SLA Reports**: Comprehensive availability and performance reports
+- ⚙️ **Settings**: Configure monitoring behavior
 
-- Supports both SQLite (development) and PostgreSQL (production)
-- Configurable scheduler and Playwright settings
-- Flexible logging configuration
+## Development Workflow
+
+### Running the Full Stack
+
+1. Start the backend (in terminal 1):
+```bash
+cd backend
+source venv/bin/activate
+uvicorn app.main:app --reload
+```
+
+2. Start the frontend (in terminal 2):
+```bash
+cd frontend
+npm run dev
+```
+
+The frontend is configured to proxy API requests to the backend automatically.
+
+### Testing
+
+Backend tests:
+```bash
+cd backend
+pytest
+```
+
+Frontend unit tests:
+```bash
+cd frontend
+npm test
+```
+
+Frontend e2e tests:
+```bash
+cd frontend
+npm run test:e2e
+```
+
+### Building for Production
+
+Backend: The FastAPI application can be run with any ASGI server (Uvicorn, Gunicorn + Uvicorn workers)
+
+Frontend:
+```bash
+cd frontend
+npm run build
+```
+
+Build artifacts will be in `frontend/dist/`
 
 ## Documentation
 
-For comprehensive documentation including:
-- Detailed environment setup
-- API endpoint documentation
-- Database migration guide
-- Development workflow
-- Testing and code quality tools
+- Backend Documentation: [backend/README.md](backend/README.md)
+- Frontend Documentation: [frontend/README.md](frontend/README.md)
 
-Please refer to [backend/README.md](backend/README.md).
+## API Access
+
+- Health Check: http://localhost:8000/api/health
+- API Docs (Swagger UI): http://localhost:8000/docs
+- API Docs (ReDoc): http://localhost:8000/redoc
+
+## Configuration
+
+Both backend and frontend use environment variables for configuration. See the respective `.env.example` files in each directory.
 
 ## Legacy CLI Script
 
