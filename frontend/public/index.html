@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project1 - Frontend</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Project1 Application</h1>
+            <p class="subtitle">FastAPI Backend + Frontend</p>
+        </header>
+        
+        <main>
+            <section class="status-card">
+                <h2>System Status</h2>
+                <div id="status-container">
+                    <p>Checking backend status...</p>
+                </div>
+            </section>
+
+            <section class="info-card">
+                <h2>Quick Links</h2>
+                <ul>
+                    <li><a href="/api/health" target="_blank">Backend Health Check</a></li>
+                    <li><a href="/docs" target="_blank">API Documentation (Swagger)</a></li>
+                    <li><a href="/redoc" target="_blank">API Documentation (ReDoc)</a></li>
+                </ul>
+            </section>
+
+            <section class="info-card">
+                <h2>About</h2>
+                <p>This is a containerized deployment of Project1 with:</p>
+                <ul>
+                    <li>FastAPI backend with SQLAlchemy and Alembic migrations</li>
+                    <li>PostgreSQL database</li>
+                    <li>Nginx-served frontend</li>
+                    <li>Docker Compose orchestration</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Project1. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Fetch backend health status
+        async function checkBackendHealth() {
+            const container = document.getElementById('status-container');
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                container.innerHTML = `
+                    <div class="status-success">
+                        <p><strong>Status:</strong> ${data.status}</p>
+                        <p><strong>App Name:</strong> ${data.app_name}</p>
+                        <p><strong>Version:</strong> ${data.version}</p>
+                        <p><strong>Timestamp:</strong> ${new Date(data.timestamp).toLocaleString()}</p>
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="status-error">
+                        <p><strong>Error:</strong> Unable to connect to backend</p>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Check status on load
+        checkBackendHealth();
+        
+        // Refresh status every 30 seconds
+        setInterval(checkBackendHealth, 30000);
+    </script>
+</body>
+</html>

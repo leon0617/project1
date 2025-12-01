@@ -1,0 +1,72 @@
+services:
+  # Backend API (Development mode with SQLite)
+  backend-dev:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: project1-backend-dev
+    restart: unless-stopped
+    environment:
+      # Application
+      APP_NAME: ${APP_NAME:-Project1 API (Dev)}
+      DEBUG: ${DEBUG:-true}
+      
+      # Database (SQLite for development)
+      DATABASE_TYPE: sqlite
+      SQLITE_DB_PATH: /app/data/app.db
+      
+      # Scheduler
+      SCHEDULER_ENABLED: ${SCHEDULER_ENABLED:-false}
+      SCHEDULER_TIMEZONE: ${SCHEDULER_TIMEZONE:-UTC}
+      
+      # Playwright
+      PLAYWRIGHT_BROWSER: ${PLAYWRIGHT_BROWSER:-chromium}
+      PLAYWRIGHT_HEADLESS: ${PLAYWRIGHT_HEADLESS:-true}
+      
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-DEBUG}
+      
+      # Seeding
+      SEED_SAMPLE_DATA: ${SEED_SAMPLE_DATA:-true}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      # Mount entire app for hot reload in development
+      - ./backend:/app:rw
+      # Persistent SQLite database
+      - sqlite_dev_data:/app/data
+    networks:
+      - project1-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend (Development)
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: project1-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    networks:
+      - project1-network
+    depends_on:
+      - backend-dev
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+networks:
+  project1-network:
+    driver: bridge
+
+volumes:
+  sqlite_dev_data:
